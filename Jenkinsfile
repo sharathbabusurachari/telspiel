@@ -78,7 +78,7 @@ pipeline {
                              id: "qa-jfrog-instance",
                              url: 'http://ci1.saswatfinance.com:8082/artifactory',
                              username: 'qa-jenkins',
-                              password: 'qa-jfrog-password'
+                              password: 'qa-jfrog-password',
                               bypassProxy: true,
                                timeout: 300
                                     )

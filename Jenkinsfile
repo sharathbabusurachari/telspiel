@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-            ARTIFACTORY_SERVER = 'http://20.235.255.141:8082/' // Define the configured Artifactory server ID
+            ARTIFACTORY_SERVER = 'http://20.235.255.141:8081/' // Define the configured Artifactory server ID
             ARTIFACTORY_REPO = 'qa-saswat-java-repo'     // Define the Artifactory repository key
         }
 

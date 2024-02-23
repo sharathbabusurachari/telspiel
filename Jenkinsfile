@@ -1,26 +1,24 @@
 pipeline {
     agent any
-
-    environment {
-            ARTIFACTORY_SERVER = 'http://ci1.saswatfinance.com:8082/artifactory' // Define the configured Artifactory server ID
-            ARTIFACTORY_REPO = 'qa-saswat-java-repo'     // Define the Artifactory repository key
-        }
-
     tools {
         maven 'MAVEN'
     }
 
     stages {
+
         stage('Build') {
             steps {
                 echo 'Building the env using pipeline'
                 checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/sharathbabusurachari/telspiel']])
                 sh "mvn -Dmaven.test.failure.ignore=true clean package"
-            }}
+            }
+        }
+
         stage('Test') {
             steps {
                 echo 'Testing the env using pipeline'
-            }}
+            }
+        }
 
         stage('Deploy') {
             steps {
@@ -47,9 +45,9 @@ pipeline {
                                 fi
                  '''
                    }
-             }
+        }
             /*
-            stage('CODE ANALYSIS with SONARQUBE') {
+        stage('CODE ANALYSIS with SONARQUBE') {
                 environment {
                               scannerHome = tool 'SonarScanner'
                              }
@@ -73,7 +71,8 @@ pipeline {
                         }
             }
             */
-            stage ('Server'){
+
+        stage ('Server'){
                         steps {
                            rtServer (
                              id: "qa-jfrog-instance",
@@ -84,8 +83,9 @@ pipeline {
                                timeout: 300
                                     )
                         }
-                    }
-                    stage('Upload'){
+            }
+
+        stage('Upload'){
                         steps{
                             rtUpload (
                              serverId:"qa-jfrog-instance" ,
@@ -99,13 +99,14 @@ pipeline {
                                        }''',
                                     )
                         }
-                    }
-                    stage ('Publish build info') {
+            }
+
+            stage ('Publish build info') {
                         steps {
                             rtPublishBuildInfo (
                                 serverId: "qa-jfrog-instance"
                             )
                         }
-                    }
+            }
         }
  }

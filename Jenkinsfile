@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-            ARTIFACTORY_SERVER = 'http://ci1.saswatfinance.com:8082/' // Define the configured Artifactory server ID
+            ARTIFACTORY_SERVER = 'http://ci1.saswatfinance.com:8082/artifactory' // Define the configured Artifactory server ID
             ARTIFACTORY_REPO = 'qa-saswat-java-repo'     // Define the Artifactory repository key
         }
 
@@ -73,22 +73,38 @@ pipeline {
                         }
             }
             */
-            stage('Publish to Artifactory') {
+            stage ('Server'){
                         steps {
-                            script {
-                                def server = Artifactory.server ARTIFACTORY_SERVER
-                                def buildInfo = Artifactory.newBuildInfo()
-
-                                server.publishBuildInfo buildInfo
-
-                                // Example: Maven deployment
-                                server.mavenDeployer {
-                                    deployerCredentialsId = 'qa-jfrog-password' // Configure Jenkins credentials for Artifactory
-                                    repositoryKey = ARTIFACTORY_REPO
-                                    snapshotsRepositoryKey = ARTIFACTORY_REPO
-                                    version = '1.0-SNAPSHOT'
-                                }
-                            }
+                           rtServer (
+                             id: "qa-jfrog-instance",
+                             url: 'http://ci1.saswatfinance.com:8082/artifactory',
+                             username: 'qa-jenkins',
+                              password: 'qa-jfrog-password'
+                              bypassProxy: true,
+                               timeout: 300
+                                    )
+                        }
+                    }
+                    stage('Upload'){
+                        steps{
+                            rtUpload (
+                             serverId:"qa-jfrog-instance" ,
+                              spec: '''{
+                               "files": [
+                                  {
+                                  "pattern": "*.jar",
+                                  "target": "saswat-java-qa-libs-snapshot-local"
+                                  }
+                                        ]
+                                       }''',
+                                    )
+                        }
+                    }
+                    stage ('Publish build info') {
+                        steps {
+                            rtPublishBuildInfo (
+                                serverId: "qa-jfrog-instance"
+                            )
                         }
                     }
         }

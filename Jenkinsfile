@@ -48,8 +48,8 @@ pipeline {
                  '''
                    }
              }
-
-            /*stage('CODE ANALYSIS with SONARQUBE') {
+            /*
+            stage('CODE ANALYSIS with SONARQUBE') {
                 environment {
                               scannerHome = tool 'SonarScanner'
                              }
@@ -70,12 +70,9 @@ pipeline {
                                    error "Pipeline aborted due to Quality Gate failure: ${qg.status}"
                                 }
                            }
-                                /*timeout(time: 5, unit: 'MINUTES') {
-                                  waitForQualityGate abortPipeline: true
-                                } */
                         }
-            }*/
-
+            }
+            */
             stage('Publish to Artifactory') {
                         steps {
                             script {

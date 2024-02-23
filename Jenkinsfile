@@ -1,5 +1,11 @@
 pipeline {
     agent any
+
+    environment {
+            ARTIFACTORY_SERVER = 'http://20.235.255.141:8082/' // Define the configured Artifactory server ID
+            ARTIFACTORY_REPO = 'qa-saswat-java-repo'     // Define the Artifactory repository key
+        }
+
     tools {
         maven 'MAVEN'
     }
@@ -70,12 +76,23 @@ pipeline {
                         }
             }
 
-            stage('Publish to JFrog Repository'){
-                   steps {
-                   sh '''
-                   echo 'PlacheHolder for Pushing Artifacts'
-                   '''
-              }
-            }
+            stage('Publish to Artifactory') {
+                        steps {
+                            script {
+                                def server = Artifactory.server ARTIFACTORY_SERVER
+                                def buildInfo = Artifactory.newBuildInfo()
+
+                                server.publishBuildInfo buildInfo
+
+                                // Example: Maven deployment
+                                server.mavenDeployer {
+                                    deployerCredentialsId = 'qa-jfrog-password' // Configure Jenkins credentials for Artifactory
+                                    repositoryKey = ARTIFACTORY_REPO
+                                    snapshotsRepositoryKey = ARTIFACTORY_REPO
+                                    version = '1.0-SNAPSHOT'
+                                }
+                            }
+                        }
+                    }
         }
  }

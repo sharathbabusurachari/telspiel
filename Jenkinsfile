@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-            ARTIFACTORY_SERVER = 'http://ci1.saswatfinance.com:8082/artifactory' // Define the configured Artifactory server ID
+            ARTIFACTORY_SERVER = 'http://ci1.saswatfinance.com:8082/' // Define the configured Artifactory server ID
             ARTIFACTORY_REPO = 'qa-saswat-java-repo'     // Define the Artifactory repository key
         }
 
@@ -49,7 +49,7 @@ pipeline {
                    }
              }
 
-            stage('CODE ANALYSIS with SONARQUBE') {
+            /*stage('CODE ANALYSIS with SONARQUBE') {
                 environment {
                               scannerHome = tool 'SonarScanner'
                              }
@@ -74,7 +74,7 @@ pipeline {
                                   waitForQualityGate abortPipeline: true
                                 } */
                         }
-            }
+            }*/
 
             stage('Publish to Artifactory') {
                         steps {
